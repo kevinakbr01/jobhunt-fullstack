@@ -35,19 +35,25 @@ app.get("/api/health", (req, res) => {
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT;
 async function startServer() {
   try {
     const connection = await pool.getConnection();
     console.log("Koneksi MySQL Berhasil!");
     connection.release();
 
+    const PORT = process.env.PORT || 5000;
+
     app.listen(PORT, () => {
       console.log(`API running on port ${PORT}`);
     });
   } catch (error) {
     console.error("Koneksi Gagal", error.message);
+    process.exitCode = 1;
   }
 }
 
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = app;
